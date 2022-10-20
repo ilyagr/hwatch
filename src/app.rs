@@ -170,6 +170,7 @@ impl<'a> App<'a> {
     ///
     pub fn run<B: Backend>(&mut self, terminal: &mut Terminal<B>) -> io::Result<()> {
         self.history_area.next();
+        self.set_ansi_color(true);
         let mut update_draw = true;
         loop {
             if self.done {

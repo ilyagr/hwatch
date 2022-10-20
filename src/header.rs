@@ -140,7 +140,7 @@ impl<'a> HeaderArea<'a> {
         self.data = vec![];
 
         // help message
-        const HELP_MESSAGE: &str = "Display help with h key!";
+        const HELP_MESSAGE: &str = "";
 
         // HeaderArea Width
         let width = self.area.width as usize;

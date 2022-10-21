@@ -90,6 +90,9 @@ pub struct App<'a> {
     show_history: bool,
 
     ///
+    show_ui: bool,
+
+    ///
     filtered_text: String,
 
     ///
@@ -139,6 +142,7 @@ impl<'a> App<'a> {
             ansi_color: false,
             line_number: false,
             show_history: true,
+            show_ui: true,
 
             is_filtered: false,
             is_regex_filter: false,
@@ -207,8 +211,10 @@ impl<'a> App<'a> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         self.define_subareas(f.size());
 
-        // Draw header area.
-        self.header_area.draw(f);
+        if self.show_ui {
+            // Draw header area.
+            self.header_area.draw(f);
+        }
 
         // Draw watch area.
         self.watch_area.draw(f);
@@ -241,15 +247,19 @@ impl<'a> App<'a> {
 
     ///
     fn define_subareas(&mut self, total_area: tui::layout::Rect) {
-        let top_chunks = Layout::default()
-            .constraints([Constraint::Length(2), Constraint::Max(0)].as_ref())
-            .split(total_area);
-
         let history_width: u16 = match self.show_history {
             true => HISTORY_WIDTH,
             false => 0,
         };
+        let header_height: u16 = match self.show_ui {
+            true => 2,
+            false => 0,
+        };
 
+        // get Area's chunks
+        let top_chunks = Layout::default()
+            .constraints([Constraint::Length(header_height), Constraint::Max(0)].as_ref())
+            .split(total_area);
         let main_chunks = Layout::default()
             .constraints(
                 [
@@ -681,14 +691,21 @@ impl<'a> App<'a> {
                     }
 
                     // Common input key
-                    // Backspace ... toggel history panel.
+                    // Backspace ... toggle history panel.
                     Event::Key(KeyEvent {
                         code: KeyCode::Backspace,
                         modifiers: KeyModifiers::NONE,
                     }) => self.toggle_history(),
 
                     // Common input key
-                    // h ... toggel help window.
+                    // u ... toggle ui
+                    Event::Key(KeyEvent {
+                        code: KeyCode::Char('u'),
+                        modifiers: KeyModifiers::NONE,
+                    }) => self.toggle_ui(),
+
+                    // Common input key
+                    // h ... toggle help window.
                     Event::Key(KeyEvent {
                         code: KeyCode::Char('h'),
                         modifiers: KeyModifiers::NONE,
@@ -732,7 +749,7 @@ impl<'a> App<'a> {
                         modifiers: KeyModifiers::NONE,
                     }) => self.input_key_down(),
 
-                    // h ... toggel help window.
+                    // h ... toggle help window.
                     Event::Key(KeyEvent {
                         code: KeyCode::Char('h'),
                         modifiers: KeyModifiers::NONE,
@@ -871,6 +888,12 @@ impl<'a> App<'a> {
     ///
     fn toggle_history(&mut self) {
         self.show_history = !self.show_history;
+        let _ = self.tx.send(AppEvent::Redraw);
+    }
+
+    ///
+    fn toggle_ui(&mut self) {
+        self.show_ui = !self.show_ui;
         let _ = self.tx.send(AppEvent::Redraw);
     }
 

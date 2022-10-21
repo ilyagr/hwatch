@@ -2,7 +2,12 @@
 // Use of this source code is governed by an MIT license
 // that can be found in the LICENSE file.
 
+use std::fmt;
+
 use crate::common::Timestamp;
+use crate::history::HistoryTimestamp::{Latest, Past};
+use chrono::Local;
+use chrono_humanize::HumanTime;
 use tui::{
     backend::Backend,
     layout::Constraint,
@@ -16,6 +21,15 @@ use tui::{
 pub enum HistoryTimestamp {
     Latest,
     Past(Timestamp),
+}
+
+impl fmt::Display for HistoryTimestamp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            HistoryTimestamp::Latest => write!(f, "latest                 "),
+            HistoryTimestamp::Past(t) => write!(f, "{}", t.format("%Y-%m-%d %H:%M:%S%.3f")),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -106,6 +120,13 @@ impl HistoryArea {
                         false => Color::Red,
                     },
                 });
+                Cell::from(Span::styled(
+                    match c.timestamp {
+                        Latest => Latest.to_string(),
+                        Past(t) => format!("{}", HumanTime::from(t - Local::now())),
+                    },
+                    cell_style,
+                ))
                 Cell::from(Span::styled(c.timestamp.as_str(), cell_style))
             });
 

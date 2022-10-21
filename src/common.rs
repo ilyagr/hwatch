@@ -3,16 +3,18 @@
 // that can be found in the LICENSE file.
 
 // module
-use chrono::Local;
+use chrono::{DateTime, Local};
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 
 // local module
 use crate::exec::CommandResult;
 
-pub fn now_str() -> String {
-    let date = Local::now();
-    return date.format("%Y-%m-%d %H:%M:%S%.3f").to_string();
+pub type Timestamp = DateTime<Local>;
+
+pub fn now() -> Timestamp {
+    return Local::now();
+    // return date.format("%Y-%m-%d %H:%M:%S%.3f").to_string();
 }
 
 /// logging result data to log file(_logpath).

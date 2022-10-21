@@ -2,6 +2,7 @@
 // Use of this source code is governed by an MIT license
 // that can be found in the LICENSE file.
 
+use crate::common::Timestamp;
 use tui::{
     backend::Backend,
     layout::Constraint,
@@ -12,8 +13,14 @@ use tui::{
 };
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub enum HistoryTimestamp {
+    Latest,
+    Past(Timestamp),
+}
+
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub struct History {
-    pub timestamp: String,
+    pub timestamp: HistoryTimestamp,
     pub status: bool,
     pub num: u16,
 }
@@ -39,7 +46,7 @@ impl HistoryArea {
             area: tui::layout::Rect::new(0, 0, 0, 0),
             active: false,
             data: vec![vec![History {
-                timestamp: "latest                 ".to_string(),
+                timestamp: HistoryTimestamp::Latest,
                 status: true,
                 num: 0,
             }]],
@@ -59,14 +66,14 @@ impl HistoryArea {
         self.data[0][0].status = latest_status;
     }
 
-    pub fn update(&mut self, timestamp: String, status: bool, num: u16) {
+    pub fn update(&mut self, timestamp: Timestamp, status: bool, num: u16) {
         self.set_latest_status(status);
 
         // insert latest timestamp
         self.data.insert(
             1,
             vec![History {
-                timestamp,
+                timestamp: HistoryTimestamp::Past(timestamp),
                 status,
                 num,
             }],
@@ -89,13 +96,8 @@ impl HistoryArea {
 
         let rows = draw_data.iter().enumerate().map(|(ix, item)| {
             // set table height
-            let height = item
-                .iter()
-                .map(|content| content.timestamp.chars().filter(|c| *c == '\n').count())
-                .max()
-                .unwrap_or(0)
-                + 1;
-            // set cell data
+            let height = 1; // TODO: ????!!! See diff here
+                            // set cell data
             let cells = item.iter().map(|c| {
                 let cell_style = Style::default().fg(match ix {
                     0 => LATEST_COLOR,

@@ -2,6 +2,7 @@
 // Use of this source code is governed by an MIT license
 // that can be found in the LICENSE file.
 
+use crate::chrono::{Local, TimeZone};
 use crossbeam_channel::{Receiver, Sender};
 // module
 use crossterm::event::{Event, KeyCode, KeyEvent, KeyModifiers};
@@ -19,7 +20,10 @@ use crate::event::AppEvent;
 use crate::exec::CommandResult;
 use crate::header::HeaderArea;
 use crate::help::HelpWindow;
-use crate::history::{History, HistoryArea};
+use crate::history::{
+    History, HistoryArea,
+    HistoryTimestamp::{Latest, Past},
+};
 use crate::output;
 use crate::watch::WatchArea;
 
@@ -428,7 +432,7 @@ impl<'a> App<'a> {
         // append result.
         let latest_num = counter - 1;
         tmp_history.push(History {
-            timestamp: "latest                 ".to_string(),
+            timestamp: Latest, // "latest                 ".to_string(),
             status: self.results[&latest_num].status,
             num: 0,
         });
@@ -455,7 +459,7 @@ impl<'a> App<'a> {
 
             if is_push {
                 tmp_history.push(History {
-                    timestamp: result.1.timestamp.clone(),
+                    timestamp: Past(result.1.timestamp),
                     status: result.1.status,
                     num: result.0 as u16,
                 });
@@ -485,7 +489,7 @@ impl<'a> App<'a> {
 
         // check results size.
         let mut latest_result = CommandResult {
-            timestamp: "".to_string(),
+            timestamp: Local.timestamp(0, 0),
             command: "".to_string(),
             status: true,
             output: "".to_string(),
@@ -546,7 +550,7 @@ impl<'a> App<'a> {
             let _timestamp = &self.results[&result_index].timestamp;
             let _status = &self.results[&result_index].status;
             self.history_area
-                .update(_timestamp.to_string(), *_status, result_index as u16);
+                .update(*_timestamp, *_status, result_index as u16);
 
             // update selected
             if selected != 0 {

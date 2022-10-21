@@ -13,7 +13,7 @@ ansi-parser = "0.8.0"
 # TODO: ansi-parserのバージョンアップグレードの対応が必要になるので、その対応をしたらバージョンアップが必要.
 # ansi-parser = {version = "0.9.0", path = "../ansi-parser"}
 async-std = {version = "1.11"}
-chrono = "0.4"
+chrono = {version = "0.4", features = ["serde"]}
 clap = {version = "3.1.18", features = ["cargo"]}
 crossbeam-channel = "0.5.4"
 crossterm = "0.22"

@@ -119,6 +119,7 @@ impl<'a> HeaderArea<'a> {
 
     pub fn set_current_result(&mut self, result: CommandResult) {
         self.command = result.command;
+
         self.timestamp = result.timestamp;
         self.exec_status = result.status;
     }

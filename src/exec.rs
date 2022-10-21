@@ -15,7 +15,7 @@ use crate::event::AppEvent;
 
 #[derive(Clone, Deserialize, Serialize)]
 pub struct CommandResult {
-    pub timestamp: String,
+    pub timestamp: common::Timestamp,
     pub command: String,
     pub status: bool,
     pub output: String,
@@ -166,7 +166,7 @@ impl ExecuteCommand {
 
         // Set result
         let result = CommandResult {
-            timestamp: common::now_str(),
+            timestamp: common::now(),
             command: command_str,
             status,
             output: String::from_utf8_lossy(&vec_output).to_string(),

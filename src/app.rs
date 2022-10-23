@@ -90,7 +90,7 @@ pub struct App<'a> {
     show_history: bool,
 
     ///
-    show_ui: bool,
+    show_header: bool,
 
     ///
     filtered_text: String,
@@ -142,7 +142,7 @@ impl<'a> App<'a> {
             ansi_color: false,
             line_number: false,
             show_history: true,
-            show_ui: true,
+            show_header: true,
 
             is_filtered: false,
             is_regex_filter: false,
@@ -211,7 +211,7 @@ impl<'a> App<'a> {
     pub fn draw<B: Backend>(&mut self, f: &mut Frame<B>) {
         self.get_area(f);
 
-        if self.show_ui {
+        if self.show_header {
             // Draw header area.
             self.header_area.draw(f);
         }
@@ -251,7 +251,7 @@ impl<'a> App<'a> {
             true => HISTORY_WIDTH,
             false => 0,
         };
-        let header_height: u16 = match self.show_ui {
+        let header_height: u16 = match self.show_header {
             true => 2,
             false => 0,
         };
@@ -697,14 +697,14 @@ impl<'a> App<'a> {
                     Event::Key(KeyEvent {
                         code: KeyCode::Backspace,
                         modifiers: KeyModifiers::NONE,
-                    }) => self.toggle_history(),
+                    }) => self.show_history(!self.show_history),
 
                     // Common input key
                     // u ... toggle ui
                     Event::Key(KeyEvent {
                         code: KeyCode::Char('u'),
                         modifiers: KeyModifiers::NONE,
-                    }) => self.toggle_ui(),
+                    }) => self.show_header(!self.show_header),
 
                     // Common input key
                     // h ... toggle help window.
@@ -846,17 +846,20 @@ impl<'a> App<'a> {
     //    }
     //}
 
+    fn set_area(&mut self, target: ActiveArea) {
+        self.area = target;
+        // set active window to header.
+        self.header_area.set_active_area(self.area);
+        self.header_area.update();
+    }
+
     ///
     fn toggle_area(&mut self) {
         if let ActiveWindow::Normal = self.window {
             match self.area {
-                ActiveArea::Watch => self.area = ActiveArea::History,
-                ActiveArea::History => self.area = ActiveArea::Watch,
+                ActiveArea::Watch => self.set_area(ActiveArea::History),
+                ActiveArea::History => self.set_area(ActiveArea::Watch),
             }
-
-            // set active window to header.
-            self.header_area.set_active_area(self.area);
-            self.header_area.update();
         }
     }
 
@@ -888,14 +891,17 @@ impl<'a> App<'a> {
     }
 
     ///
-    fn toggle_history(&mut self) {
-        self.show_history = !self.show_history;
+    pub fn show_history(&mut self, visible: bool) {
+        self.show_history = visible;
+        if !visible {
+            self.set_area(ActiveArea::Watch);
+        }
         let _ = self.tx.send(AppEvent::Redraw);
     }
 
     ///
-    fn toggle_ui(&mut self) {
-        self.show_ui = !self.show_ui;
+    pub fn show_header(&mut self, visible: bool) {
+        self.show_header = visible;
         let _ = self.tx.send(AppEvent::Redraw);
     }
 

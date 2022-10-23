@@ -149,6 +149,12 @@ fn build_app() -> clap::Command<'static> {
                 .long("differences")
                 .short('d'),
         )
+        .arg(
+            Arg::new("no_title")
+            .help("hide the UI on start. Use `u` and `backspace` to restore it.")
+            .long("no-title")
+            .short('t'),
+        )
         // Enable line number mode option
         //   [--line-number,-N]
         .arg(
@@ -208,6 +214,7 @@ fn main() {
     // let batch = matche.is_present("batch");
     let diff = matche.is_present("differences");
     let color = matche.is_present("color");
+    let show_ui = matche.is_present("no_title");
     let is_exec = matche.is_present("exec");
     let line_number = matche.is_present("line_number");
 
@@ -277,7 +284,8 @@ fn main() {
         // Set line number in view
         .set_line_number(line_number)
         // Set diff(watch diff) in view
-        .set_watch_diff(diff);
+        .set_watch_diff(diff)
+        .set_show_ui(!show_ui);
 
     // Set logfile
     if let Some(logfile) = logfile {

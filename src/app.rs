@@ -27,21 +27,21 @@ use crate::watch::WatchArea;
 use crate::HISTORY_WIDTH;
 
 ///
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ActiveArea {
     Watch,
     History,
 }
 
 ///
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ActiveWindow {
     Normal,
     Help,
 }
 
 ///
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum DiffMode {
     Disable,
     Watch,
@@ -50,7 +50,7 @@ pub enum DiffMode {
 }
 
 ///
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum OutputMode {
     Output,
     Stdout,
@@ -58,7 +58,7 @@ pub enum OutputMode {
 }
 
 ///
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum InputMode {
     None,
     Filter,
@@ -233,7 +233,8 @@ impl<'a> App<'a> {
         self.watch_area.draw(f);
 
         if self.show_history {
-            // Draw history area
+            self.history_area
+                .set_active(self.area == ActiveArea::History);
             self.history_area.draw(f);
         }
 

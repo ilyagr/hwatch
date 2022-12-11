@@ -207,19 +207,14 @@ impl<'a> HeaderArea<'a> {
         };
 
         // Set IsOnlyDiffline value
-        let value_only_diffline: &str;
-        if self.is_only_diffline {
-            value_only_diffline = "(Only)";
-        } else {
-            value_only_diffline = "";
-        }
+        let value_only_diffline = if self.is_only_diffline { "(Only)" } else { "" };
 
         // Set Diff mode value
         let value_diff = match self.diff_mode {
             DiffMode::Disable => "None".to_string(),
             DiffMode::Watch => "Watch".to_string(),
-            DiffMode::Line => ("Line".to_string() + value_only_diffline).to_string(),
-            DiffMode::Word => ("Word".to_string() + value_only_diffline).to_string(),
+            DiffMode::Line => "Line".to_string() + value_only_diffline,
+            DiffMode::Word => "Word".to_string() + value_only_diffline,
         };
 
         // Set Color

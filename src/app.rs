@@ -435,12 +435,7 @@ impl<'a> App<'a> {
         let mut tmp_history = vec![];
 
         // append result.
-        let latest_num: usize;
-        if counter > 1 {
-            latest_num = counter - 1;
-        } else {
-            latest_num = 0;
-        }
+        let latest_num: usize = if counter > 1 { counter - 1 } else { 0 };
 
         tmp_history.push(History {
             timestamp: "latest                 ".to_string(),
@@ -562,7 +557,7 @@ impl<'a> App<'a> {
         // update WatchArea
         self.set_output_data(selected);
 
-        return true;
+        true
     }
 
     ///

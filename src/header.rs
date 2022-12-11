@@ -60,7 +60,6 @@ pub struct HeaderArea<'a> {
     ///
     is_only_diffline: bool,
 
-
     ///
     output_mode: OutputMode,
 

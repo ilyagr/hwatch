@@ -3,11 +3,11 @@
 // that can be found in the LICENSE file.
 
 use tui::{
-    style::{Style, Color},
     prelude::{Line, Margin},
+    style::{Color, Style},
     symbols,
     symbols::scrollbar,
-    widgets::{Paragraph, Wrap, Block, Borders, Scrollbar, ScrollbarOrientation, ScrollbarState},
+    widgets::{Block, Borders, Paragraph, Scrollbar, ScrollbarOrientation, ScrollbarState, Wrap},
     Frame,
 };
 
@@ -66,7 +66,7 @@ impl<'a> WatchArea<'a> {
     pub fn get_area_size(&mut self) -> i16 {
         let height = self.area.height as i16;
 
-        return height
+        return height;
     }
 
     ///
@@ -100,22 +100,18 @@ impl<'a> WatchArea<'a> {
                 pane_block = Block::default()
                     .borders(Borders::RIGHT)
                     .border_style(Style::default().fg(Color::DarkGray))
-                    .border_set(
-                        symbols::border::Set {
-                            top_right: symbols::line::NORMAL.horizontal_down,
-                            ..symbols::border::PLAIN
-                        }
-                    );
+                    .border_set(symbols::border::Set {
+                        top_right: symbols::line::NORMAL.horizontal_down,
+                        ..symbols::border::PLAIN
+                    });
             } else {
                 pane_block = Block::default()
                     .borders(Borders::TOP | Borders::RIGHT)
                     .border_style(Style::default().fg(Color::DarkGray))
-                    .border_set(
-                        symbols::border::Set {
-                            top_right: symbols::line::NORMAL.horizontal_down,
-                            ..symbols::border::PLAIN
-                        }
-                    );
+                    .border_set(symbols::border::Set {
+                        top_right: symbols::line::NORMAL.horizontal_down,
+                        ..symbols::border::PLAIN
+                    });
             }
         } else {
             pane_block = Block::default()
@@ -150,7 +146,7 @@ impl<'a> WatchArea<'a> {
                     .begin_symbol(None)
                     .track_symbol(None)
                     .end_symbol(None),
-            self.area.inner(&Margin {
+                self.area.inner(&Margin {
                     vertical: 1,
                     horizontal: 0,
                 }),
@@ -196,5 +192,4 @@ impl<'a> WatchArea<'a> {
             self.position = self.lines - height as i16;
         }
     }
-
 }

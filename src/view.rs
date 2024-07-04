@@ -4,12 +4,12 @@
 
 // module
 use crossbeam_channel::{Receiver, Sender};
-use std::time::Duration;
 use crossterm::{
     event::DisableMouseCapture,
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use std::time::Duration;
 use std::{
     error::Error,
     io,
@@ -21,7 +21,7 @@ use tui::{backend::CrosstermBackend, Terminal};
 use crate::app::App;
 use crate::common::{DiffMode, OutputMode};
 use crate::event::AppEvent;
-use crate::keymap::{Keymap, default_keymap};
+use crate::keymap::{default_keymap, Keymap};
 
 // local const
 use crate::Interval;

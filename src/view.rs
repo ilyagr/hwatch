@@ -4,12 +4,12 @@
 
 // module
 use crossbeam_channel::{Receiver, Sender};
-use std::time::Duration;
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use std::time::Duration;
 use std::{
     error::Error,
     io,
@@ -19,19 +19,16 @@ use tui::{backend::CrosstermBackend, Terminal};
 
 // non blocking io
 #[cfg(any(target_os = "linux", target_os = "macos"))]
-use std::{
-    io::stdin,
-    os::unix::io::AsRawFd,
-};
-#[cfg(any(target_os = "linux", target_os = "macos"))]
 use nix::fcntl::{fcntl, FcntlArg::*, OFlag};
+#[cfg(any(target_os = "linux", target_os = "macos"))]
+use std::{io::stdin, os::unix::io::AsRawFd};
 
 // local module
 use crate::app::App;
 use crate::common::{DiffMode, OutputMode};
 use crate::event::AppEvent;
 use crate::exec::CommandResult;
-use crate::keymap::{Keymap, default_keymap};
+use crate::keymap::{default_keymap, Keymap};
 
 // local const
 use crate::Interval;
@@ -201,13 +198,12 @@ impl View {
         {
             let input_tx = tx.clone();
             let _ = std::thread::spawn(move || {
-                    // non blocking io
-                    #[cfg(any(target_os = "linux", target_os = "macos"))]
-                    loop {
-                        let _ = send_input(input_tx.clone());
-                    }
+                // non blocking io
+                #[cfg(any(target_os = "linux", target_os = "macos"))]
+                loop {
+                    let _ = send_input(input_tx.clone());
                 }
-            );
+            });
         }
 
         // Create App
